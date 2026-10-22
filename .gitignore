@@ -1,0 +1,11 @@
+# macOS
+.DS_Store
+
+# Obsidian
+.obsidian/
+.trash/
+*.tmp
+
+# 不对外发布（仅保留在本地）
+0.骨碌（Gulu）的诞生.md
+0.MVP清单.md
