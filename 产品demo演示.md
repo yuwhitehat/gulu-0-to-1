@@ -1,8 +1,13 @@
+# demo演示
+
 ## 初始引导
 <img src="assets/screenshots/初始引导.png" width="600">
+
 ## 盲盒抽取
 
 <img src="assets/screenshots/盲盒抽取.png" width="600">
+ 
+
 ## 重抽与付费
 <img src="assets/screenshots/重抽与付费.png" width="600">
 
