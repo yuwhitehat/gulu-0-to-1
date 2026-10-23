@@ -1,3 +1,5 @@
-![[gulu-路演报告-demo+detect(3).html]]
+![[gulu-roadshow-report.html]]
 
-🖥️ [查看 / 下载 gulu-路演报告-demo+detect(3).html](assets/gulu-路演报告-demo+detect%283%29.html) · 36 KB
+🖥️ [下载 gulu-roadshow-report.html](assets/gulu-roadshow-report.html) · 36 KB
+
+🌐 在线查看：<https://yuwhitehat.github.io/gulu-0-to-1/assets/gulu-roadshow-report.html>
