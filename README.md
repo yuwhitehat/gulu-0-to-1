@@ -55,7 +55,7 @@ codex_workspace_bot → 飞书机器人 → 飞书用户（①）
 | 文档 | 内容 |
 | --- | --- |
 | [整体架构.md](整体架构.md) | 系统总览、分层职责、模型接入、部署形态、边界红线 |
-| [演示html报告.md](演示html报告.md) | 路演报告（Demo + Detect 汇总）入口 |
+| [演示html报告.md](路演html报告.md) | 路演报告（Demo + Detect 汇总）入口 |
 
 ### 🔍 1 · Discover｜发现
 
@@ -126,14 +126,3 @@ codex_workspace_bot → 飞书机器人 → 飞书用户（①）
 
 ---
 
-## 五、本地协作
-
-```sh
-# 拉取
-git clone git@github.com:<your-name>/<repo-name>.git
-
-# 提交更新
-git add -A && git commit -m "说明" && git push
-```
-
-> `.obsidian/`、`.DS_Store` 及未发布文档已列入 `.gitignore`，不会进入仓库。

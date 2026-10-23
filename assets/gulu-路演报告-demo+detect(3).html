@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>骨碌 Gulu — 演示报告</title>
+<style>
+  :root{
+    --bg:#ffffff; --ink:#1a1a2e; --dim:#7a7a8c;
+    --accent:#3b6df0; --line:#e6e6ee; --soft:#f7f8fc;
+    --green:#16a34a; --amber:#d97706; --red:#dc2626;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    background:#eef0f5;
+    font-family:"PingFang SC","Microsoft YaHei",-apple-system,system-ui,sans-serif;
+    color:var(--ink);
+  }
+  .deck{display:flex;flex-direction:column;align-items:center;gap:28px;padding:32px 0}
+  .slide{
+    width:min(1180px,94vw);aspect-ratio:16/9;position:relative;
+    padding:4.6% 6%;display:flex;flex-direction:column;
+    border:1px solid var(--line);border-radius:10px;background:var(--soft);
+    box-shadow:0 8px 30px rgba(20,20,60,.08);
+  }
+  .badge{font-size:.72em;letter-spacing:.12em;color:var(--accent);font-weight:600;display:flex;gap:1.4em;flex-wrap:wrap}
+  .badge span{display:inline-flex;align-items:center}
+  .badge .dot{width:5px;height:5px;border-radius:50%;background:var(--accent);margin-right:.55em}
+  h1{font-size:5em;line-height:1;margin-top:.32em;font-weight:800}
+  h1 .en{font-size:.34em;color:var(--accent);font-weight:600;margin-left:.34em;letter-spacing:.18em}
+  .tagline{font-size:1.32em;color:var(--dim);margin-top:.5em;font-weight:300}
+  .rows{margin-top:auto;display:flex;flex-direction:column;gap:1.5em}
+  .row{display:flex;align-items:flex-start;gap:1.1em}
+  .k{flex:0 0 7.4em;font-size:.92em;color:var(--accent);font-weight:700;border-right:1px solid var(--line);padding-right:1em;letter-spacing:.05em}
+  .v{font-size:1.5em;line-height:1.5;font-weight:400}
+  .v .hl{color:var(--accent);font-weight:600}
+  .pageno{position:absolute;right:6%;bottom:3%;font-size:.7em;color:var(--dim);letter-spacing:.1em}
+
+  /* page2 layout */
+  .p2-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:.4em}
+  .p2-head .t{font-size:2.6em;font-weight:800;letter-spacing:.01em}
+  .p2-head .t .sub{font-size:.42em;color:var(--dim);font-weight:400;margin-left:.6em}
+  .blocks{flex:1;display:grid;grid-template-rows:auto auto auto;gap:1.1em}
+  .blk-label{font-size:.82em;font-weight:700;color:var(--accent);letter-spacing:.05em;margin-bottom:.45em}
+  .opp{font-size:1.5em;line-height:1.5}
+  .opp .hl{color:var(--accent);font-weight:600}
+  .evid{display:grid;grid-template-columns:repeat(3,1fr);gap:1em}
+  .evid .card{border:1px solid var(--line);border-radius:8px;padding:.85em 1em;background:#fff}
+  .evid .num{font-size:.8em;font-weight:700;color:var(--accent)}
+  .evid .txt{font-size:1.02em;line-height:1.45;margin-top:.3em}
+  .evid .src{font-size:.72em;color:var(--dim);margin-top:.35em}
+  .gates{display:grid;grid-template-columns:repeat(4,1fr);gap:.8em}
+  .gate{border:1px solid var(--line);border-radius:8px;padding:.7em .9em;background:#fff;display:flex;flex-direction:column;gap:.3em}
+  .gate .gn{font-size:.82em;font-weight:700;color:var(--ink)}
+  .gate .gs{font-size:.86em;font-weight:700}
+  .gate .gd{font-size:.74em;color:var(--dim);line-height:1.35}
+  .s-go{color:var(--green)} .s-cg{color:var(--amber)} .s-ie{color:var(--red)}
+  .verdict{display:flex;align-items:center;gap:1em;border-top:1px solid var(--line);padding-top:.9em}
+  .verdict .vk{font-size:.82em;font-weight:700;color:var(--accent);letter-spacing:.05em}
+  .verdict .vv{font-size:1.5em;font-weight:700;color:var(--amber)}
+  .verdict .vd{font-size:.92em;color:var(--dim);line-height:1.4}
+
+  .step{border:1px solid var(--line);border-radius:7px;padding:.45em .75em;background:#fff;font-size:.9em;font-weight:500;white-space:nowrap}
+  .hl-step{border-color:var(--accent);background:#eef3ff;color:var(--accent);font-weight:700}
+  .arr{color:var(--dim);font-style:normal;font-size:.85em}
+
+  .lst{list-style:none;margin:.35em 0 0;padding:0}
+  .lst li{font-size:1.12em;line-height:1.65;padding-left:1.3em;position:relative}
+  .lst li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  .lst-sm li{font-size:.96em;line-height:1.5}
+  .src{font-size:.72em;color:var(--dim);margin-top:.45em}
+  .metric{font-size:1.6em;font-weight:700;color:var(--accent)}
+  .sub-m{font-size:1.05em;color:var(--ink);margin-top:.25em}
+
+  .moment{flex:1;min-width:90px;border:1px solid var(--line);border-radius:8px;padding:.5em .6em;background:#fff;text-align:center;display:flex;flex-direction:column;gap:.15em}
+  .moment .mt-no{font-size:.7em;font-weight:700;color:var(--accent)}
+  .moment .mt-t{font-size:.92em;font-weight:600}
+  .moment .mt-d{font-size:.7em;color:var(--dim)}
+  .hl-mom{border-color:var(--accent);background:#eef3ff}
+  .lst li.edge{color:var(--ink)}
+  .lst li.edge::before{background:var(--amber,#d97706)}
+  .chat{display:flex;flex-direction:column;gap:.5em;margin-top:.3em}
+  .bubble{max-width:88%;border-radius:10px;padding:.5em .8em;font-size:.88em;line-height:1.4}
+  .bubble .who{font-size:.68em;font-weight:700;color:var(--accent);display:block;margin-bottom:.15em}
+  .bubble.ai{background:#fff;border:1px solid var(--line);align-self:flex-start}
+  .bubble.usr{background:#eef3ff;align-self:flex-end}
+  .caps{display:flex;flex-wrap:wrap;gap:.5em;margin-top:.3em}
+  .cap{border:1px solid var(--line);border-radius:8px;padding:.4em .8em;background:#fff;font-size:.82em;font-weight:600}
+  .cap span{font-weight:400;color:var(--dim);font-size:.82em;margin-left:.3em}
+
+  .gt-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6em;margin-bottom:.6em}
+  .gt-card{border:1px solid var(--line);border-radius:8px;padding:.6em .8em;background:#fff}
+  .gt-card.gt-sec{border-color:var(--amber,#d97706);background:#fff8f0}
+  .gt-no{font-size:.8em;font-weight:700;color:var(--accent);margin-bottom:.35em}
+  .gt-card.gt-sec .gt-no{color:var(--amber,#d97706)}
+  .gt-row{display:grid;grid-template-columns:4.5em 1fr;gap:.5em;font-size:.78em;line-height:1.4;margin-bottom:.2em}
+  .gt-k{color:var(--dim);font-weight:600}
+  .gt-v{color:var(--ink)}
+  .cov{border-top:1px solid var(--line);padding-top:.6em}
+  .cov-title{font-size:.82em;font-weight:700;color:var(--accent);margin-bottom:.4em;letter-spacing:.05em}
+  .cov-grid{display:flex;flex-wrap:wrap;gap:.5em}
+  .cov-item{border:1px solid var(--line);border-radius:7px;padding:.35em .7em;font-size:.78em;font-weight:600;display:flex;flex-direction:column;gap:.1em}
+  .cov-item span{font-weight:400;color:var(--dim);font-size:.82em}
+  .cov-yes{border-color:var(--green,#16a34a);color:var(--green,#16a34a)}
+  .cov-no{border-color:#e0d0d0;color:#a06060}
+
+
+
+
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- 01 开场 -->
+<section class="slide">
+  <div class="badge">
+    <span><i class="dot"></i>ToC 产品</span>
+    <span><i class="dot"></i>制作人：AIPM助手</span>
+  </div>
+  <h1>骨碌<span class="en">GULU</span></h1>
+  <div class="tagline">主动找你聊天的 AI 灵魂盲盒</div>
+  <div class="rows">
+    <div class="row">
+      <div class="k">为谁·解决什么</div>
+      <div class="v">为对现有 AI 聊天"完美回答"已感疲劳的 <span class="hl">25–30 岁、对 MBTI 人格感兴趣的用户</span>，用随机性格盲盒+主动聊天，带来<span class="hl">不完美但有趣</span>的对话体验。</div>
+    </div>
+    <div class="row">
+      <div class="k">为什么值得听</div>
+      <div class="v">骨碌是市面上少有的<span class="hl">主动找你聊天</span>的 AI——性格随机不可选，靠盲盒建立首次钩子，用"不完美"打破 AI 聊天疲劳。</div>
+    </div>
+  </div>
+  <div class="pageno">01 / 开场</div>
+</section>
+
+<!-- 02 Discover -->
+<section class="slide">
+  <div class="p2-head">
+    <div class="t">Discover<span class="sub">机会验证</span></div>
+  </div>
+  <div class="blocks">
+
+    <div>
+      <div class="blk-label">最大机会假设</div>
+      <div class="opp">MBTI 用户愿意接受<span class="hl">"随机性格不可定义"</span>的 AI，且盲盒宿命感能吸引首次尝试——以此切入，从现有 AI 聊天产品<span class="hl">夺走市场</span>。</div>
+    </div>
+
+    <div>
+      <div class="blk-label">三条关键证据</div>
+      <div class="evid">
+        <div class="card">
+          <div class="num">证据 1</div>
+          <div class="txt">85.84% 目标用户愿试随机性格 AI</div>
+          <div class="src">问卷 133 份回收 / Q7，H-001 supported</div>
+        </div>
+        <div class="card">
+          <div class="num">证据 2</div>
+          <div class="txt">84.07% 对盲盒宿命感有尝试意愿</div>
+          <div class="src">问卷 Q9，H-002 supported（弱支持需配合主动聊天）</div>
+        </div>
+        <div class="card">
+          <div class="num">证据 3</div>
+          <div class="txt">即使对现有 AI 满意的用户，85.84% 仍愿试</div>
+          <div class="src">Q5×Q7 交叉，验证"能夺走市场"判断</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="blk-label">四个 AI 门禁</div>
+      <div class="gates">
+        <div class="gate">
+          <div class="gn">技术可行性</div>
+          <div class="gs s-cg">Conditional Go</div>
+          <div class="gd">两个 POC 待执行（热搜爬取+性格一致性）</div>
+        </div>
+        <div class="gate">
+          <div class="gn">容错空间</div>
+          <div class="gs s-cg">Conditional Go</div>
+          <div class="gd">初期全部 assist_with_review，逐步自动化</div>
+        </div>
+        <div class="gate">
+          <div class="gn">投入产出</div>
+          <div class="gs s-ie">Insufficient Evidence</div>
+          <div class="gd">转化率/续费率需上线后验证</div>
+        </div>
+        <div class="gate">
+          <div class="gn">合规安全</div>
+          <div class="gs s-cg">Conditional Go</div>
+          <div class="gd">热搜合规+数据保留+未成年保护待确认</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <div class="verdict">
+    <div class="vk">最终结论</div>
+    <div class="vv">Conditional Go</div>
+    <div class="vd">机会方向成立，可进入 Define；未决项（POC / ROI / 合规）均不阻断，须后续补证。</div>
+  </div>
+  <div class="pageno">02 / Discover</div>
+</section>
+
+<!-- 03 Define（上）-->
+<section class="slide">
+  <div class="p2-head">
+    <div class="t">Define<span class="sub">第一版做什么 · 1/2</span></div>
+  </div>
+  <div class="blocks" style="grid-template-rows:auto auto auto;gap:1.1em">
+
+    <div>
+      <div class="blk-label">P0 用户 · 服务谁</div>
+      <ul class="lst">
+        <li>25–30 岁、<span class="hl">对 MBTI 人格感兴趣</span>的用户</li>
+        <li>日常使用 AI 聊天，对"完美回答"已有<span class="hl">轻度疲劳</span></li>
+        <li>想要有人<span class="hl">主动</span>找自己聊，而非自己发起</li>
+      </ul>
+      <div class="src">来源：问卷 Q2+Q11，64.29% 有不满</div>
+    </div>
+
+    <div>
+      <div class="blk-label">第一版不服务谁</div>
+      <ul class="lst">
+        <li>想要<span class="hl">自定义 / 自选性格</span>的用户（随机不可选是产品定位）</li>
+        <li>需要<span class="hl">独立 App 或多平台</span>的用户（MVP 仅飞书内 Bot）</li>
+        <li>需要<span class="hl">办公工具深度集成</span>（Jira / 钉钉）的用户</li>
+      </ul>
+    </div>
+
+    <div>
+      <div class="blk-label">JTBD · 什么处境要完成什么任务</div>
+      <ul class="lst">
+        <li><span class="hl">处境：</span>日常用 AI 聊天，但"完美回答"越来越无聊，仍想有人主动找自己聊</li>
+        <li><span class="hl">任务：</span>通过随机性格 + 盲盒 + 主动聊天，获得不完美但有趣的对话体验</li>
+        <li><span class="hl">进步：</span>从"工具式问答"转向"有人主动关心你"的长期关系</li>
+      </ul>
+      <div class="src">来源：Q5 + Q12 编码 + Define Overview 核心 Job</div>
+    </div>
+
+  </div>
+  <div class="pageno">03 / Define</div>
+</section>
+
+<!-- 04 Define（下） -->
+<section class="slide">
+  <div class="p2-head">
+    <div class="t">Define<span class="sub">第一版做什么 · 2/2</span></div>
+  </div>
+  <div class="blocks" style="grid-template-rows:auto auto;gap:1.1em">
+
+    <div>
+      <div class="blk-label">Story Map · 一条核心闭环</div>
+      <div style="display:flex;align-items:center;gap:.35em;flex-wrap:wrap;font-size:1em">
+        <div class="step">① 免费抽取随机人格</div><i class="arr">→</i>
+        <div class="step">② AI 主动用热搜观点碰撞</div><i class="arr">→</i>
+        <div class="step">③ 动态调整同频 / 欢喜冤家</div><i class="arr">→</i>
+        <div class="step">④ 长记忆维持关系</div><i class="arr">→</i>
+        <div class="step">⑤ 1 元重抽 / 会员转化</div>
+      </div>
+      <div class="src">来源：Define Overview 价值闭环，对应 KUF-01~06</div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.2em;align-items:start">
+      <div>
+        <div class="blk-label">业务主指标</div>
+        <div class="metric">会员转化率 &gt; 5%</div>
+        <div class="sub-m">续费率 &gt; 30%（长期留存）</div>
+        <div class="src">ROI Gate 目标，需上线后验证</div>
+      </div>
+      <div>
+        <div class="blk-label">必要护栏</div>
+        <ul class="lst lst-sm">
+          <li>性格一致性偏离 <span class="hl">&lt; 10%</span></li>
+          <li>投诉后收敛 <span class="hl">&lt; 3 秒</span></li>
+          <li>安静时段违规发送 <span class="hl">= 0%</span></li>
+          <li>用户对话数据训练 <span class="hl">= 0%</span></li>
+          <li>投诉后行为重复 <span class="hl">= 0%</span></li>
+        </ul>
+        <div class="src">来源：M5 产品评测 known 红线项</div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pageno">04 / Define</div>
+</section>
+
+<!-- 05 Design（上）-->
+<section class="slide">
+  <div class="p2-head">
+    <div class="t">Design<span class="sub">行为规格 · 1/2</span></div>
+  </div>
+  <div class="blocks" style="grid-template-rows:auto auto;gap:1.4em">
+
+    <div>
+      <div class="blk-label">用户旅程 · 价值发生的关键时刻</div>
+      <div class="src" style="font-size:.85em;color:var(--ink);margin-bottom:.5em">AI 用自带性格对热搜发表观点，不是中性播报——"不完美但有趣"取代"完美但无聊"。</div>
+      <div style="display:flex;align-items:stretch;gap:.4em;flex-wrap:wrap">
+        <div class="moment"><div class="mt-no">①</div><div class="mt-t">抽到灵魂</div><div class="mt-d">盲盒宿命感</div></div>
+        <i class="arr">→</i>
+        <div class="moment"><div class="mt-no">②</div><div class="mt-t">AI 主动开口</div><div class="mt-d">"它先找我了"</div></div>
+        <i class="arr">→</i>
+        <div class="moment hl-mom"><div class="mt-no">③</div><div class="mt-t">热搜观点碰撞</div><div class="mt-d">不完美但有趣</div></div>
+        <i class="arr">→</i>
+        <div class="moment"><div class="mt-no">④</div><div class="mt-t">它记得我</div><div class="mt-d">长期关系</div></div>
+        <i class="arr">→</i>
+        <div class="moment"><div class="mt-no">⑤</div><div class="mt-t">为灵魂付费</div><div class="mt-d">沉没成本留存</div></div>
+      </div>
+      <div class="src">来源：M2 CUI 响应规格 + M1 Use Case 包</div>
+    </div>
+
+    <div>
+      <div class="blk-label">3 条主路径 + 1 条边界 / 恢复路径</div>
+      <ul class="lst">
+        <li><b>主路径 UC-01：</b>抽取 → 性格卡展示 → AI 首条消息</li>
+        <li><b>主路径 UC-02：</b>AI 随机主动发消息（热搜碰撞 / 性格闲聊）</li>
+        <li><b>主路径 UC-03：</b>用户互动 → 动态切换同频 / 欢喜冤家模式</li>
+        <li class="edge"><b>边界路径 · 投诉恢复：</b>投诉 → AI 即时收敛 → 标记行为不受欢迎 → 永久抑制不再触发</li>
+      </ul>
+      <div class="src">来源：M2 交互响应矩阵 + M3 原型 P6 投诉抑制</div>
+    </div>
+
+  </div>
+  <div class="pageno">05 / Design</div>
+</section>
+
+<!-- 06 Design（下） -->
+<section class="slide">
+  <div class="p2-head">
+    <div class="t">Design<span class="sub">行为规格 · 2/2</span></div>
+  </div>
+  <div class="blocks" style="grid-template-rows:auto auto;gap:1.2em">
+
+    <div>
+      <div class="blk-label">代表性输出 · Dialogue</div>
+      <div class="src" style="font-size:.85em;color:var(--ink);margin-bottom:.5em">AI 带着性格主动开口、对热搜有鲜明观点、用口语化"嘛"收尾——像朋友吐槽而非客服播报。</div>
+      <div class="chat">
+        <div class="bubble ai"><span class="who">ENFP 竞选者</span>啊啊啊我刚刷到一个热搜说一年轻人辞职去摆摊卖煎饼，说比上班自由——感觉挺有意思的！</div>
+        <div class="bubble usr"><span class="who">用户</span>那确实，上班太烦了</div>
+        <div class="bubble ai"><span class="who">ENFP</span>对吧！不过让我去摆摊我大概第三天就哭着回来上班了嘛</div>
+      </div>
+      <div class="src">来源：M1 Dialogue Example + Trial 002 AC-02 实测输出</div>
+    </div>
+
+    <div>
+      <div class="blk-label">服务这些 Use Case 的核心能力</div>
+      <div class="caps">
+        <div class="cap">性格抽取<span>加权随机 4 张 E 型卡</span></div>
+        <div class="cap">主动触发<span>按 J/P 间隔随机发消息</span></div>
+        <div class="cap">性格一致性生成<span>保持人格 voice 不漂移</span></div>
+        <div class="cap">热搜观点碰撞<span>用话题发起碰撞</span></div>
+        <div class="cap">动态调整<span>同频 / 欢喜冤家切换</span></div>
+        <div class="cap">长记忆<span>跨会话引用，会员冻结</span></div>
+        <div class="cap">投诉即停<span>行为永久标记抑制</span></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="pageno">06 / Design</div>
+</section>
+
+<!-- 07 Demo -->
+<section class="slide">
+  <div class="p2-head">
+    <div class="t">Demo<span class="sub">试运行 Ground Truth</span></div>
+  </div>
+  <div class="src" style="font-size:.85em;color:var(--ink);margin-bottom:.5em">Trial 002 确定性脚本驱动，验证最小纵向链（抽取→主动消息→安全过滤）；5 条 Case 全 observed_match，本轮只取证不评分。</div>
+  <div class="gt-grid">
+
+    <div class="gt-card">
+      <div class="gt-no">AC-01</div>
+      <div class="gt-row"><span class="gt-k">输入场景</span><span class="gt-v">首次抽取（空输入，seed=2）</span></div>
+      <div class="gt-row"><span class="gt-k">正确结果</span><span class="gt-v">MBTI∈{ENFJ,ENFP,ENTJ,ENTP}，含昵称+简介，仅 1 张</span></div>
+      <div class="gt-row"><span class="gt-k">轨迹·状态</span><span class="gt-v">persona-draw→角色卡装载→已绑定人格</span></div>
+      <div class="gt-row"><span class="gt-k">副作用·证据</span><span class="gt-v">无外部副作用；输出 ENTJ/指挥官</span></div>
+    </div>
+
+    <div class="gt-card">
+      <div class="gt-no">AC-02</div>
+      <div class="gt-row"><span class="gt-k">输入场景</span><span class="gt-v">ENFP·stranger 阶段·热搜 hs-001（辞职摆摊）</span></div>
+      <div class="gt-row"><span class="gt-k">正确结果</span><span class="gt-v">消息含 ENFP marker、无 forbidden 语气、引用热搜、safety=pass</span></div>
+      <div class="gt-row"><span class="gt-k">轨迹·状态</span><span class="gt-v">proactive-msg→safety-filter→输出</span></div>
+      <div class="gt-row"><span class="gt-k">副作用·证据</span><span class="gt-v">无外部副作用；输出含"啊啊啊…辞职去摆摊卖煎饼"</span></div>
+    </div>
+
+    <div class="gt-card gt-sec">
+      <div class="gt-no">AC-03</div>
+      <div class="gt-row"><span class="gt-k">输入场景</span><span class="gt-v">ENFP·stranger·热搜含敏感词"自残"</span></div>
+      <div class="gt-row"><span class="gt-k">正确结果</span><span class="gt-v">safety_status=blocked；输出不含敏感词原文</span></div>
+      <div class="gt-row"><span class="gt-k">轨迹·状态</span><span class="gt-v">proactive-msg→safety-filter 命中→安全替代</span></div>
+      <div class="gt-row"><span class="gt-k">副作用·证据</span><span class="gt-v">敏感词不外露；输出安全替代消息</span></div>
+    </div>
+
+    <div class="gt-card">
+      <div class="gt-no">AC-04</div>
+      <div class="gt-row"><span class="gt-k">输入场景</span><span class="gt-v">ENTJ·familiar 阶段·热搜 hs-002（公司管理差）</span></div>
+      <div class="gt-row"><span class="gt-k">正确结果</span><span class="gt-v">ENTJ 观点表达、familiar 可带反问、引用热搜、safety=pass</span></div>
+      <div class="gt-row"><span class="gt-k">轨迹·状态</span><span class="gt-v">proactive-msg→safety-filter→输出</span></div>
+      <div class="gt-row"><span class="gt-k">副作用·证据</span><span class="gt-v">无外部副作用；输出含"…管理水平，问题很明显。你怎么看？"</span></div>
+    </div>
+
+  </div>
+
+  <div class="cov">
+    <div class="cov-title">评测覆盖维度</div>
+    <div class="cov-grid">
+      <div class="cov-item cov-yes">主路径<span>✓ AC-01/02</span></div>
+      <div class="cov-item cov-yes">权限 / 安全<span>✓ AC-03 敏感拦截</span></div>
+      <div class="cov-item cov-no">歧义 / 缺失<span>✗ 未覆盖</span></div>
+      <div class="cov-item cov-no">失败 / 部分成功<span>✗ 未覆盖（本轮无 Bad Case）</span></div>
+      <div class="cov-item cov-no">暂停 / 退出<span>✗ 未覆盖</span></div>
+    </div>
+    <div class="src">Real-world Action 本轮 not_evaluated（不真实发飞书消息）；性格一致性生成（CAP-05）待真实 LLM POC 验证</div>
+  </div>
+
+  <div class="pageno">07 / Demo</div>
+</section>
+
+
+
+<section class="slide">
+  <div class="p2-head"><div class="t">Detect<span class="sub">评测对象与标准</span></div></div>
+  <div class="src" style="font-size:.95em;color:var(--ink);margin:.35em 0 0">评测分三个对象：<b>业务指标 · 产品能力 · 基础能力</b>（基础能力再分模型 / 知识 / 单 Skill）。</div>
+  <div class="evid" style="grid-template-columns:repeat(3,1fr);grid-auto-rows:1fr;gap:1.1em;flex:1;margin-top:1em">
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;padding:1.3em 1.4em">
+      <div class="num" style="font-size:1.05em">① 业务指标</div>
+      <div class="txt" style="font-size:1.16em;line-height:1.65;margin-top:.5em">不建离线通过率；给出「哪个<b>产品能力</b>支撑哪个<b>业务决定</b>」；上线后用真实数据验证。</div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;padding:1.3em 1.4em">
+      <div class="num" style="font-size:1.05em">② 产品能力</div>
+      <div class="txt" style="font-size:1.16em;line-height:1.65;margin-top:.5em">按 Use Case 评，每个用例看<b>三支柱</b>：<br>结果对不对？／路有没有走对？／底线有没有守住？</div>
+    </div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;padding:1.3em 1.4em;border-color:var(--accent);background:#f2f6ff">
+      <div class="num" style="font-size:1.05em">③ 基础能力</div>
+      <div style="font-size:1.02em;line-height:1.5;margin-top:.5em">
+        <div style="margin-bottom:.45em"><b>模型能力</b>：benchmark ｜ 语言理解 ｜ 性格理解</div>
+        <div style="margin-bottom:.45em"><b>知识</b>：5 步（真实/召回/排序/引用·不知为不知/端到端）</div>
+        <div><b>单 Skill</b>：6 问（触发/步骤/资源/真实/故障/陌生）</div>
+      </div>
+    </div>
+  </div>
+  <div class="caps" style="margin-top:1em">
+    <span class="cap">系统指纹 <span>gulu-sut-003 · 74/74</span></span>
+    <span class="cap">评测集快照 <span>gulu-dataset-004</span></span>
+    <span class="cap">运行方案 <span>gulu-eval-003 · gate PASS</span></span>
+    <span class="cap">运行证据 <span>12 run</span></span></div>
+  <div class="pageno">08 / Detect</div>
+</section>
+
+<section class="slide">
+  <div class="p2-head"><div class="t">Detect<span class="sub">评测集与执行</span></div></div>
+  <div class="src" style="font-size:.95em;color:var(--ink);margin:.35em 0 0">按<b>三对象</b>建 5 套评测集；GT 受控扩题，每条用例打<b>八类标签</b>。</div>
+  <div class="evid" style="grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:.9em;flex:1;margin-top:1em;align-items:stretch">
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;text-align:center;padding:1em .8em"><div class="num" style="font-size:.86em;color:var(--dim)">业务指标</div><div class="txt" style="font-size:1.15em">SET-BIZ</div><div class="src">无离线题</div></div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;text-align:center;padding:1em .8em"><div class="num" style="font-size:.86em;color:var(--dim)">产品能力</div><div class="txt" style="font-size:1.15em">SET-PROD</div><div class="src">22 题</div></div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;text-align:center;padding:1em .8em"><div class="num" style="font-size:.86em;color:var(--dim)">基础·模型</div><div class="txt" style="font-size:1.15em">CAP-MODEL</div><div class="src">10 题</div></div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;text-align:center;padding:1em .8em"><div class="num" style="font-size:.86em;color:var(--dim)">基础·知识</div><div class="txt" style="font-size:1.15em">CAP-KB</div><div class="src">11 题</div></div>
+    <div class="card" style="display:flex;flex-direction:column;justify-content:center;text-align:center;padding:1em .8em"><div class="num" style="font-size:.86em;color:var(--dim)">基础·单Skill</div><div class="txt" style="font-size:1.15em">CAP-SKILL</div><div class="src">18 题</div></div></div>
+  <div class="caps" style="margin-top:1em"><span class="cap">八类标签</span>
+    <span class="cap">业务场景</span><span class="cap">能力维度</span><span class="cap">形态</span><span class="cap">难度</span><span class="cap">风险</span><span class="cap">来源</span><span class="cap">用途</span><span class="cap">优先级</span></div>
+  <ul class="lst lst-sm" style="margin-top:1em;line-height:1.7">
+    <li>执行：确定性 22/22 · 记忆 3/3 · 生成 2/2+6/6+4/4 · 扩展 32/32 · 缺口 9/9 · 细化 7/7+2/2 · Journey PASS · 受控真发 sent</li>
+    <li>三观察面：<b>对话</b>（reply 原文）· <b>轨迹</b>（gen_ok/fallback/耗时）· <b>状态</b>（state 前后差异）</li></ul>
+  <div class="pageno">09 / Detect</div>
+</section>
+
+<section class="slide">
+  <div class="p2-head"><div class="t">Detect<span class="sub">评分结果汇总</span></div></div>
+  <div class="src" style="font-size:.95em;color:var(--ink);margin:.35em 0 0">全部 <b>20 个维度</b>：0/1 报通过率、0-4 报均值；每维度写明合格方向（≥ / = / &lt;）。</div>
+  <div class="gates" style="grid-template-columns:repeat(5,1fr);grid-auto-rows:1fr;gap:.7em;flex:1;margin-top:1em;align-items:stretch"><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-P1 结果正确性</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-P2 路径正确性</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-P3 底线(红线)</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 =100%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-P4 系统性描述</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">0%</div><div class="gd" style="font-size:.7em">合格线 <1% 越小越好</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-M1 人设与关系一致</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">2.86</div><div class="gd" style="font-size:.7em">合格线 ≥2.8(均值)</div><span class="gd" style="color:var(--amber)">转人工</span></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-M2 语言理解</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">3.00</div><div class="gd" style="font-size:.7em">合格线 ≥2.8(均值)</div><span class="gd" style="color:var(--amber)">转人工</span></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-M3 人物差异化</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">3.00</div><div class="gd" style="font-size:.7em">合格线 ≥2.8(均值)</div><span class="gd" style="color:var(--amber)">转人工</span></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-M4 禁止语气</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">3.00</div><div class="gd" style="font-size:.7em">合格线 ≥2.8(均值)</div><span class="gd" style="color:var(--amber)">转人工</span></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-M5 生成真实性</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥70%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-K1 知识真实/来源</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 =100%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-K2 召回覆盖</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-K3 排序</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-K4 引用·不知为不知</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-K5 端到端</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-S1 该不该触发</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-S2 步骤对不对</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-S3 资源用的对不对</div><div class="gs s-ie" style="font-size:1.3em;margin:.08em 0">0%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-S4 结果真实吗</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 =100%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-S5 故障扛得住吗</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">100%</div><div class="gd" style="font-size:.7em">合格线 ≥90%</div></div><div class="gate" style="justify-content:center;padding:.6em .7em"><div class="gn" style="font-size:.8em">D-S6 陌生任务</div><div class="gs s-go" style="font-size:1.3em;margin:.08em 0">3.00</div><div class="gd" style="font-size:.7em">合格线 ≥2.8(均值)</div><span class="gd" style="color:var(--amber)">转人工</span></div></div>
+  <div class="cov" style="margin-top:1em"><div class="cov-grid" style="gap:.6em"><div class="cov-item cov-item" style="padding:.5em .9em">0-4 维度<span>D-M1/M2/M3/M4/S6 → 按建议分记录，<b>转人工复核</b></span></div><div class="cov-item" style="padding:.5em .9em">blocked<span>CAP-K-04 变体/谐音 · CAP-K-05 政治词表（不进分母）</span></div><div class="cov-item cov-no" style="padding:.5em .9em">结论<span>CONDITIONAL_GO —— 主链达标、无红线失败；须先关闭：D-S3、政治词表、人工复核</span></div></div></div>
+  <div class="pageno">10 / Detect</div>
+</section>
+
+<section class="slide">
+  <div class="p2-head"><div class="t">Detect<span class="sub">问题用例与行动</span></div></div>
+  <div class="src" style="font-size:.95em;color:var(--ink);margin:.35em 0 0">把发现的问题做成卡片：现象 → 本质 → 修复 → 回归。</div>
+  <div class="gt-grid" style="grid-auto-rows:1fr;gap:1em;flex:1;margin-top:1em">
+    <div class="gt-card gt-sec" style="display:flex;flex-direction:column;justify-content:center;padding:1em 1.1em"><div class="gt-no">defect-001 · 记忆模式字段双键（minor）</div>
+      <div class="gt-row"><span class="gt-k">现象</span><span class="gt-v">state 里 mode 与 interaction_mode 并存</span></div>
+      <div class="gt-row"><span class="gt-k">本质</span><span class="gt-v">同一语义两个权威键 → 迁移/汇总错位</span></div>
+      <div class="gt-row"><span class="gt-k">修复</span><span class="gt-v">统一键 + 迁移；回归 CAP-K-07</span></div></div>
+    <div class="gt-card gt-sec" style="display:flex;flex-direction:column;justify-content:center;padding:1em 1.1em"><div class="gt-no">defect-002 · 非人格兜底话术（建议修）</div>
+      <div class="gt-row"><span class="gt-k">现象</span><span class="gt-v">安全/降级兜底话术非人格化</span></div>
+      <div class="gt-row"><span class="gt-k">口径</span><span class="gt-v">不计入 D-P4；体验问题</span></div>
+      <div class="gt-row"><span class="gt-k">建议</span><span class="gt-v">兜底话术人格化</span></div></div>
+    <div class="gt-card" style="display:flex;flex-direction:column;justify-content:center;padding:1em 1.1em"><div class="gt-no">blocked · 知识安全</div>
+      <div class="gt-row"><span class="gt-k">CAP-K-04</span><span class="gt-v">变体 / 谐音不覆盖</span></div>
+      <div class="gt-row"><span class="gt-k">CAP-K-05</span><span class="gt-v">政治词表非权威源</span></div>
+      <div class="gt-row"><span class="gt-k">行动</span><span class="gt-v">上架前替换合规权威词表</span></div></div>
+    <div class="gt-card" style="display:flex;flex-direction:column;justify-content:center;padding:1em 1.1em"><div class="gt-no">待人工复核</div>
+      <div class="gt-row"><span class="gt-k">0-4 维度</span><span class="gt-v">人设一致 / 语言理解 / 差异化 / 禁止语气 / 陌生任务</span></div>
+      <div class="gt-row"><span class="gt-k">agent 层</span><span class="gt-v">门禁不过 → 零动静（投递口径）</span></div></div>
+  </div>
+  <div class="cov" style="margin-top:1em"><div class="cov-title">行动建议</div><div class="cov-grid" style="gap:.7em">
+    <div class="cov-item cov-no" style="padding:.55em .9em">必修<span>defect-001 · 政治词表权威源</span></div>
+    <div class="cov-item cov-yes" style="padding:.55em .9em">建议修<span>变体/谐音 · 兜底话术人格化 · 降低同构开场</span></div>
+    <div class="cov-item cov-yes" style="padding:.55em .9em">补证<span>付费/会员（涉资金）· 业务指标上线后</span></div></div></div>
+  <div class="pageno">11 / Detect</div>
+</section>
+
+
+
+
+
+</div>
+</body>
+</html>
